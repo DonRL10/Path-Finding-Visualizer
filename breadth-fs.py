@@ -126,10 +126,6 @@ def algorithm(draw, grid, start, end):
                 visited[i] = 1
                 came_from[i] = curr
                 q.append(i)
-                if i == end:
-                    reconstruct_path(came_from, end, draw)
-                    end.make_end()
-                    return 1
                 i.make_open()
 
         draw()
