@@ -1,7 +1,5 @@
-import math
 from queue import PriorityQueue
 import pygame
-from pygame.version import PygameVersion
 
 width = 800
 dis = pygame.display.set_mode((width, width))
