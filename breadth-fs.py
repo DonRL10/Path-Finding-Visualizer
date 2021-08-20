@@ -103,47 +103,39 @@ def reconstruct_path(came_from, current, draw):
 
 
 def algorithm(draw, grid, start, end):
-    count = 0
-    open_set = PriorityQueue()
-    open_set.put((0, count, start))
+    q = []
+    q.append(start)
     came_from = {}
-    g_score = {node: 1e18 for row in grid for node in row}
-    g_score[start] = 0
-    f_score = {node: 1e18 for row in grid for node in row}
-    f_score[start] = h(start.get_pos(), end.get_pos())
+    visited = {node: 0 for i in grid for node in i}
+    visited[start] = 1
 
-    open_set_hash = {start}
-
-    while not open_set.empty():
+    while len(q) > 0:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        current = open_set.get()[2]
-        open_set_hash.remove(current)
+        curr = q.pop(0)
 
-        if current == end:
+        if curr == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
             return 1
 
-        for i in current.neighbours:
-            temp_g_score = g_score[current] + 1
+        for i in curr.neighbours:
+            if visited[i] != 1:
+                visited[i] = 1
+                came_from[i] = curr
+                q.append(i)
+                if i == end:
+                    reconstruct_path(came_from, end, draw)
+                    end.make_end()
+                    return 1
+                i.make_open()
 
-            if temp_g_score < g_score[i]:
-                came_from[i] = current
-                g_score[i] = temp_g_score
-                f_score[i] = temp_g_score + h(i.get_pos(), end.get_pos())
-
-                if i not in open_set_hash:
-                    count += 1
-                    open_set.put((f_score[i], count, i))
-                    open_set_hash.add(i)
-                    i.make_open()
         draw()
-        if current != start:
-            current.make_close()
-    
+        if curr != start:
+            curr.make_close()
+
     return 0
 
 def make_grid(rows, width):
